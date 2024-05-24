@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Warpcast Auto Like</title>
+</head>
+<body>
+    <h1>Warpcast Auto Like</h1>
+    <form id="likeForm">
+        Token: <input type="text" id="token"><br>
+        Targets (comma separated): <input type="text" id="targets"><br>
+        Min Delay: <input type="text" id="min_delay"><br>
+        Max Delay: <input type="text" id="max_delay"><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('likeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const token = document.getElementById('token').value;
+            const targets = document.getElementById('targets').value;
+            const min_delay = document.getElementById('min_delay').value;
+            const max_delay = document.getElementById('max_delay').value;
+
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `token=${token}&targets=${targets}&min_delay=${min_delay}&max_delay=${max_delay}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                let results = document.getElementById('results');
+                results.innerHTML = '<h2>Results:</h2>';
+                data.forEach((result, idx) => {
+                    results.innerHTML += `<p>[${idx+1}] Target: ${result.target} - Status: ${result.status_code} - Response: ${result.response_text}</p>`;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
